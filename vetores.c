@@ -1,3 +1,6 @@
+//how to print a array in C?
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
