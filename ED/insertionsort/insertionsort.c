@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
 void ordernacao_insercao(int *A,int n)
 {
@@ -24,7 +25,6 @@ int main()
 	int i,j;
 	float tempo=0;
 	struct timeval a,b;
-	float v;
 	FILE *fp;
     fp = fopen ("ordenacao_insertion_sort.txt", "w");
 	while(n<=10000){
