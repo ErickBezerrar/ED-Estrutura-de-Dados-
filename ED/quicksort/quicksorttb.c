@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/time.h>
 
 int partition(int *v,int i,int f)
@@ -22,8 +21,12 @@ int partition(int *v,int i,int f)
 }
 void quick_sort(int *A,int i,int f)
 {
-	int p;
+	int p,m,aux;
     if (i<f){
+			m=(i+f)/2;
+			aux=A[i];
+			A[i]=A[m];
+			A[m]=aux;
             p=partition(A,i,f);
 			quick_sort(A,i,p-1);
 			quick_sort(A,p+1,f);
@@ -32,27 +35,24 @@ void quick_sort(int *A,int i,int f)
 
 int main()
 {
-	int i,j;
+  int i;
 	float tempo;
 	struct timeval a,b;
 	float v;
 	FILE *fp;
 	int n=100;
-    fp = fopen ("quick_sort_medio.txt", "w");
+    fp = fopen ("quick_sort_melhor_caso.txt", "w");
 	while(n<=10000){
 	    int A[n];
-		tempo=0;
-		for(j=0;j<100;j++){
 
         gettimeofday(&b,NULL);
          for(i=0;i<n;i++){
-		    A[i]=rand()%((100-0+1)+1);
+		    A[i]=i;
 		}
         quick_sort(A,0,n-1);
         gettimeofday(&a,NULL);
-	    tempo=(a.tv_sec+a.tv_usec*1e-6)-(b.tv_sec+b.tv_usec*1e-6)+tempo;
-		}
-		fprintf(fp,"%d %f\n",n,(tempo*1e6)/100);
+	    tempo=(a.tv_sec+a.tv_usec*1e-6)-(b.tv_sec+b.tv_usec*1e-6);
+		fprintf(fp,"%d %f\n",n,tempo*1e6);
 		n=n+100;
 	}	
 	return 0;
