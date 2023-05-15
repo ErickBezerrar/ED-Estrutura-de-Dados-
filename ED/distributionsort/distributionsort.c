@@ -53,7 +53,8 @@ void distribution_sort(int *v,int n)
 
 }
 
-int main(){
+int main()
+{
 	int i,j;
 	float tempo;
 	struct timeval a,b;

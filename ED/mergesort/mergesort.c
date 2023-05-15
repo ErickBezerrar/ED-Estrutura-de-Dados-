@@ -29,6 +29,7 @@ void merge(int *v, int i, int m, int f)
     }
     free(w);
 }
+
 void merge_sort(int *A, int i, int f)
 {
 
