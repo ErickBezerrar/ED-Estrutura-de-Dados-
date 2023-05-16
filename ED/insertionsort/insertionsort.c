@@ -2,7 +2,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
-void ordernacao_insercao(int *A,int n)
+void ordenacao_insercao(int *A,int n)
 {
      int k;
      int i;
@@ -34,7 +34,7 @@ int main()
              for(i=0;i<n;i++){
     		    A[i]=rand()%((100-0+1)+1);
     		}
-    		ordernacao_insercao(A,n);
+    		ordenacao_insercao(A,n);
             gettimeofday(&a,NULL);
     	    tempo=(a.tv_sec+a.tv_usec*1e-6)-(b.tv_sec+b.tv_usec*1e-6)+tempo;
 		}

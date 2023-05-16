@@ -20,6 +20,7 @@ int partition(int *v,int i,int f)
 	v[p]=a;
 	return b-1;
 }
+
 void quick_sort(int *A,int i,int f)
 {
 	int p;
