@@ -31,7 +31,7 @@ int main()
 		int A[n];
         gettimeofday(&b,NULL);
          for(i=0;i<n;i++){
-		    A[i]=n-i;
+		    A[i]= n-i;
 		}
 		ordenacao_insercao(A,n);
         gettimeofday(&a,NULL);

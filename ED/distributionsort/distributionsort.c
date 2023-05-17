@@ -2,11 +2,10 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-int maior (int *A,int n)
-{
+int maior (int *A,int n){
     int m=A[0];
     int i;
-    for(i=2;i<n;i++){
+    for(i=0;i<n;i++){
         if(A[i]>m){
             m=A[i];
             
@@ -16,12 +15,11 @@ int maior (int *A,int n)
     return m;
 }
 
-int menor (int *A,int n)
-{
+int menor (int *A,int n){
     int m=A[0];
     int i;
-    for(i=2;i<n;i++){
-        if(m>A[i]){
+    for(i=0;i<n;i++){
+        if (A[i] < m){
             m=A[i];
             
         }
@@ -30,39 +28,36 @@ int menor (int *A,int n)
     return m;
 }
 
-void distribution_sort(int *v,int n)
-{
-	int i,a=0;
-	int max,min;
-    max=maior(v,n);
-    min=menor(v,n);
-	int w[max];
-	for(i=0;i<max;i++){
-		w[i]=0;
-	}
-	for(i=0;i<n;i++){
-		w[v[i]-min]++;
-	}
-	for(i=0;i<max;i++){
-		while(w[i]>0){
-			v[a]=i+min;
-			a++;
-			w[i]=w[i]-1;
-		}
-	}
-
+void distribution_sort(int *v, int n) {
+    int i, a = 0;
+    int max = maior(v, n);
+    int min = menor(v, n);
+    int *w = (int *)malloc((max - min + 1) * sizeof(int));  // Alocação dinâmica
+    for (i = 0; i <= max - min; i++) {
+        w[i] = 0;
+    }
+    for (i = 0; i < n; i++) {
+        w[v[i] - min]++;
+    }
+    for (i = 0; i <= max - min; i++) {
+        while (w[i] > 0) {
+            v[a] = i + min;
+            a++;
+            w[i] = w[i] - 1;
+        }
+    }
+    free(w);  // Liberar a memória alocada
 }
 
-int main()
-{
+int main(){
 	int i,j;
 	float tempo;
 	struct timeval a,b;
-	float v;
+	//float v;
 	FILE *fp;
-	int n=100;
+	int n=0;
     fp = fopen ("distribution_sort.txt", "w");
-	while(n<=10000){
+	while(n<=1000){
 	    int A[n];
 		tempo=0;
 		for(j=0;j<100;j++){
