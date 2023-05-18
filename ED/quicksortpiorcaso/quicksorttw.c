@@ -33,7 +33,7 @@ int main()
     int i;
 	float tempo;
 	struct timeval a,b;
-	float v;
+
 	FILE *fp;
 	int n=100;
     fp = fopen ("quick_sort_pior_caso.txt", "w");

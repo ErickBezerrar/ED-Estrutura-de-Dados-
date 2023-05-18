@@ -22,10 +22,15 @@ int partition(int *v,int i,int f){
 void quick_sort(int *A,int i,int f){
 	int p,m,aux;
     if (i<f){
+		
 			m=(i+f)/2;
+
 			aux=A[i];
+
 			A[i]=A[m];
+
 			A[m]=aux;
+
             p=partition(A,i,f);
 			quick_sort(A,i,p-1);
 			quick_sort(A,p+1,f);
@@ -37,7 +42,6 @@ int main()
   	int i;
 	float tempo;
 	struct timeval a,b;
-	float v;
 	FILE *fp;
 	int n=100;
     fp = fopen ("quick_sort_melhor_caso.txt", "w");
