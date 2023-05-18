@@ -54,7 +54,7 @@ int main()
     int n = 100;
     fp = fopen("merge_sort.txt", "w");
     int t;
-    while (n <= 10000)
+    while (n <= 1000)
     {
         int A[n];
         tempo = 0;

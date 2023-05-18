@@ -55,7 +55,7 @@ int main(){
 	struct timeval a,b;
 	//float v;
 	FILE *fp;
-	int n=0;
+	int n=100;
     fp = fopen ("distribution_sort.txt", "w");
 	while(n<=1000){
 	    int A[n];
