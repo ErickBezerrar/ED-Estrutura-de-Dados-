@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 
-int partition(int *v,int i,int f)
-{
+int partition(int *v,int i,int f){
     int p=i;
 	int b=i+1;
 	int k,a;
@@ -19,8 +18,7 @@ int partition(int *v,int i,int f)
 	v[p]=a;
 	return b-1;
 }
-void quick_sort(int *A,int i,int f)
-{
+void quick_sort(int *A,int i,int f){
 	int p,aux;
     if (i<f){
             p=partition(A,i,f);
@@ -29,8 +27,7 @@ void quick_sort(int *A,int i,int f)
     }
 }     
 
-int main()
-{
+int main(){
   int i;
 	float tempo;
 	struct timeval a,b;
@@ -38,12 +35,12 @@ int main()
 	FILE *fp;
 	int n=100;
     fp = fopen ("quick_sort_pior_caso.txt", "w");
-	while(n<=10000){
+	while(n<=1000){
 	    int A[n];
 
         gettimeofday(&b,NULL);
          for(i=0;i<n;i++){
-		    A[i] = n - i;
+		    A[i]=i;
 		}
         quick_sort(A,0,n-1);
         gettimeofday(&a,NULL);
