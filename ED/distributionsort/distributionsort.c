@@ -56,7 +56,7 @@ int main()
 	FILE *fp;
 	int n=100;
     fp = fopen ("distribution_sort.txt", "w");
-	while(n<=10000){
+	while(n<=1000){
 	    int A[n];
 		tempo=0;
 		for(j=0;j<100;j++){
