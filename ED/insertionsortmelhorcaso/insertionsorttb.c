@@ -17,13 +17,13 @@ void ordernacao_insercao(int *A, int n) {
 }
 
 int main() {
-    int n = 1000;
+    int n = 100;
     int i;
     float tempo;
     struct timeval a, b;
     FILE *fp;
     fp = fopen("insertion_sort_melhor_caso.txt", "w");
-    while (n <= 10000) {
+    while (n <= 1000) {
         int A[n];
         gettimeofday(&b, NULL);
         for (i = 0; i < n; i++) {

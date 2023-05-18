@@ -20,14 +20,14 @@ void ordenacao_insercao(int *A,int n)
 
 int main()
 {
-    int n=1000;
+    int n=100;
 	int i;
 	float tempo;
 	struct timeval a,b;
 	float v;
 	FILE *fp;
     fp = fopen ("insertion_sort_pior_caso.txt", "w");
-	while(n<=10000){
+	while(n<=1000){
 		int A[n];
         gettimeofday(&b,NULL);
          for(i=0;i<n;i++){

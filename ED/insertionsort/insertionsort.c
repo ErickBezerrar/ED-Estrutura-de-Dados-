@@ -21,13 +21,13 @@ void ordenacao_insercao(int *A,int n)
 
 int main()
 {
-    int n=1000;
+    int n=100;
 	int i;
 	float tempo;
 	struct timeval a,b;
 	FILE *fp;
     fp = fopen ("ordenacao_insertion_sort.txt", "w");
-	while(n<=10000){
+	while(n<=1000){
 		int A[n];
         for(i=0;i<n;i++){
     		A[i]=rand();
