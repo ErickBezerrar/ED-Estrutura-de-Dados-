@@ -35,6 +35,7 @@ int main()
         gettimeofday(&b, NULL);
         ordenacao_insercao(A,n);
         gettimeofday(&a,NULL);
+        
         tempo=(a.tv_sec+a.tv_usec*1e-6)-(b.tv_sec+b.tv_usec*1e-6);
 		fprintf(fp,"%d %f\n",n,tempo*1e6);
 		n=n+100;			

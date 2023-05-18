@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <sys/time.h>
 
-void ordernacao_insercao(int *A, int n) {
+void ordernacao_insercao(int *A, int n) 
+{
     int k;
     int i;
     int aux;
@@ -16,7 +17,8 @@ void ordernacao_insercao(int *A, int n) {
     }
 }
 
-int main() {
+int main() 
+{
     int n = 100;
     int i;
     float tempo;

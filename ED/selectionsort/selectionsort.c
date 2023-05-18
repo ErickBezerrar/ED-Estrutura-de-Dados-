@@ -30,14 +30,14 @@ void selection_sort(int *v, unsigned int n)
 
 int main()
 {
-    int n = 1;
+    int n = 100;
     int i, j;
     float tempo = 0;
     struct timeval a, b;
     FILE *fp;
     fp = fopen("selection_sort.txt", "w");
     
-    while (n <= 2000) {
+    while (n <= 1000) {
         int A[n];
         for (j = 0; j < n; j++) {
             gettimeofday(&b, NULL);
@@ -54,3 +54,4 @@ int main()
     }    
     return 0;
 }
+

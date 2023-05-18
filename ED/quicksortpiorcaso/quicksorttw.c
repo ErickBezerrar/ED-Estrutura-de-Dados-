@@ -18,6 +18,7 @@ int partition(int *v,int i,int f){
 	v[p]=a;
 	return b-1;
 }
+
 void quick_sort(int *A,int i,int f){
 	int p,aux;
     if (i<f){
@@ -27,8 +28,9 @@ void quick_sort(int *A,int i,int f){
     }
 }     
 
-int main(){
-  int i;
+int main()
+{
+    int i;
 	float tempo;
 	struct timeval a,b;
 	float v;
@@ -38,10 +40,10 @@ int main(){
 	while(n<=1000){
 	    int A[n];
 
-        gettimeofday(&b,NULL);
          for(i=0;i<n;i++){
-		    A[i]=i;
+		    A[i]=n-i;
 		}
+		gettimeofday(&b,NULL);
         quick_sort(A,0,n-1);
         gettimeofday(&a,NULL);
 	    tempo=(a.tv_sec+a.tv_usec*1e-6)-(b.tv_sec+b.tv_usec*1e-6);
