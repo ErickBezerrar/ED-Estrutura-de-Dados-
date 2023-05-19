@@ -24,11 +24,8 @@ void quick_sort(int *A,int i,int f){
     if (i<f){
 		
 			m=(i+f)/2;
-
 			aux=A[i];
-
 			A[i]=A[m];
-
 			A[m]=aux;
 
             p=partition(A,i,f);

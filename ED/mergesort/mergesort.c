@@ -10,21 +10,17 @@ void merge(int *v, int i, int m, int f)
     int k;
     int *w = (int *)malloc((f - i + 1) * sizeof(int));
 
-    for (k = 0; k <= (f - i); k++)
-    {
-        if (b > f || (a <= m && v[a] < v[b]))
-        {
+    for (k = 0; k <= (f - i); k++){
+        if (b > f || (a <= m && v[a] < v[b])){
             w[k] = v[a];
             a++;
         }
-        else
-        {
+        else{
             w[k] = v[b];
             b++;
         }
     }
-    for (k = 0; k <= (f - i); k++)
-    {
+    for (k = 0; k <= (f - i); k++){
         v[i + k] = w[k];
     }
     free(w);
