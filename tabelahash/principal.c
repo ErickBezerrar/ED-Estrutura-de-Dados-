@@ -3,8 +3,8 @@
 #include "listas_encadeadas.h"
 
 
-int funcao_hash(int matricula){
-	return matricula %11;
+int funcao_hash(int id){
+	return id %11;
 
 }
 int main(int argc, char *argv[]) {
@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	char *s;
 	size_t n=0;
 	int op=0;
-	int matricula,i;
+	int id,i;
 	v=(Lista **)malloc(22*sizeof(Lista *));
 	s=(char *)malloc(200*sizeof(char));
 
@@ -20,37 +20,48 @@ int main(int argc, char *argv[]) {
 		v[i]=criaLista();
 	}
 	while(op!=-1){
+
 		printf("(-1)-Sair;(1)-Adicionar Elemento;(2)-Exibir Elementos;(3)-Pesquisar elemento\n");
 		scanf("%d",&op);
+
 		if(op==-1){
 			printf("Saindo\n");
 			
-		}else if(op==1){
-		    printf("Digite o email\n");
+		}
+
+        else if(op==1){
+		    printf("Digite algum nome que você deseja guardar\n");
 			scanf("%s",s);
-			printf("Digite a matricula\n");
-			scanf("%d",&matricula);
+			printf("Digite a ID\n");
+			scanf("%d",&id);
             
-			insereFinalLista(&v[funcao_hash(matricula)],matricula,s);
+			insereFinalLista(&v[funcao_hash(id)],id,s);
 		    s=NULL;
 		    s=(char *)malloc(200*sizeof(char));
-		}else if(op==2){
+
+		}
+
+        else if(op==2){
 			for(i=0;i<22;i++){
 				exibeLista(&v[i]);
 			}
-		}else if(op==3){
-			printf("Digite a matricula a ser pesquisada\n");
-			scanf("%d",&matricula);
-			Lista *aux=pesquisa(&v[funcao_hash(matricula)],matricula);
+		}
+
+        else if(op==3){
+
+			printf("Digite o id a ser pesquisado\n");
+			scanf("%d",&id);
+
+			Lista *aux=pesquisa(&v[funcao_hash(id)],id);
+            
 			if(aux!=NULL){
-				printf("Elemento encontrado!! Matricula: %d ; Email: %s\n",matricula,aux->email);
-			}
-			else{
-				printf("Elemento não encontrado!! Matricula: %d não foi cadastrada.\n",matricula);
+				printf("Elemento encontrado!! id: %d ; nome: %s\n",id,aux->nome);
+			}else{
+				printf("Elemento não encontrado!! id: %d não foi cadastrada.\n",id);
 
 			}
 		}else{
-			printf("Opcao invalida!!!\n");
+			printf("Opção inválida!!!\n");
 		}
 	}
 

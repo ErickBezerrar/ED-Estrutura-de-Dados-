@@ -1,23 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "listas_encadeadas.h"
+
 Lista * criaLista(){
 	return NULL;
 }
 
 void exibeLista(Lista **lista){
     Lista *aux=(*lista);
+
 	while(aux!=NULL){
-		printf("%d- %s\n",aux->matricula,aux->email);
+		printf("%d- %s\n",aux->id,aux->nome);
 		aux=aux->prox;
 	}
 }
-void insereFinalLista(Lista **lista,int matricula,char *s){
+
+void insereFinalLista(Lista **lista,int id,char *s){
 	Lista *novo,*aux;
+
 	novo=(Lista *)malloc(sizeof(Lista));
-	novo->matricula=matricula;
-	novo->email=s;
+	novo->id=id;
+	novo->nome=s;
 	novo->prox=NULL;
+
 	if((*lista)==NULL){
 		(*lista)=novo;
 	}else{
@@ -31,6 +36,7 @@ void insereFinalLista(Lista **lista,int matricula,char *s){
 
 void destruirLista(Lista **lista){
 	Lista *aux;
+
 	while(*lista!=NULL){
 		aux=*lista;
 		*lista=(*lista)->prox;
@@ -38,21 +44,24 @@ void destruirLista(Lista **lista){
 	}
 }
 
-Lista * pesquisa(Lista **lista,int matricula){
-
+Lista * pesquisa(Lista **lista,int id){
 	Lista *aux=*lista;
 	
 	if(*lista==NULL){
 		return NULL;
 	}
-	else if((*lista)->matricula==matricula){
+
+	else if((*lista)->id==id){
 		return aux;
+        
 	}else{
 		Lista *aux2=(*lista)->prox;
-		while((aux2!=NULL)&&(aux2->matricula!=matricula)){
+
+		while((aux2!=NULL)&&(aux2->id!=id)){
 			aux=aux->prox;
 			aux=aux2->prox;
 		}
+
 		if(aux2!=NULL){
 			return aux2;
 		}
