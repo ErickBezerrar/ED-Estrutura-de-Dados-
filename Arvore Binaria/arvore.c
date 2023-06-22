@@ -14,12 +14,10 @@ typedef struct node {
 void adicionar(Node **node, int v);
 int tsearch(Node* x, int v);
 Node* newnode(int num);
-int *newv (unsigned int n);
+int *newv(unsigned int n);
 double tvtosec(struct timeval t);
-void tprint(Node* x, FILE* file); // Adicionado parâmetro 'FILE* file'
+void tprint(Node* x);
 void tremove(Node* x);
-
-void printDotFile(Node* node, FILE* file); // Corrigido o nome do parâmetro
 
 int main(void) {
     Node *node = NULL;
@@ -30,40 +28,49 @@ int main(void) {
     int achou;
     int n, k, i, primeiro, aleatorio;
 
+    FILE *output_file = fopen("output.txt", "w"); // Abrir arquivo de saída
+
+    if (output_file == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo de saída.\n");
+        return 1;
+    }
+
+    /* CONTROLA O TAMANHO */
     for (n = 1000; n <= 10000; n += 500) {
         tempo = 0;
 
+        /* CALCULA A MEDIA */
         for (i = 0; i < 10000; i++) {
+            /* PREENCHE A ÁRVORE */
             for (k = 0; k < n; k++) {
                 aleatorio = rand() % (n + 1);
                 adicionar(&node, aleatorio);
 
+                /* pegando o primeiro elemento adicionado para o melhor caso */
                 if (k == 0) {
                     primeiro = aleatorio;
                 }
             }
 
             gettimeofday(&b, NULL);
-
-            achou = tsearch(node, primeiro);
+            achou = tsearch(node, primeiro); /* melhor caso */
+            /* achou = tsearch(node, (n*2)); /* pior caso */
+            /* achou = tsearch(node, (rand() % (n+1))); /* caso médio*/
             gettimeofday(&a, NULL);
 
             tempo += tvtosec(a) - tvtosec(b);
 
+            /* LIBERA A ARVORE */
             tremove(node);
             node = NULL;
         }
 
+        /* PRINTA O RESULTADO */
         fprintf(stderr, "%d %.20lf\n", n, tempo / 10000);
-        printf("%d %.20lf\n", n, tempo / 10000);
-
-        // Gera o arquivo DOT após cada iteração
-        char dotFileName[20];
-        sprintf(dotFileName, "arvore_%d.dot", n);
-        FILE* dotFile = fopen(dotFileName, "w");
-        printDotFile(node, dotFile);
-        fclose(dotFile);
+        fprintf(output_file, "%d %.20lf\n", n, tempo / 10000);
     }
+
+    fclose(output_file); // Fechar arquivo de saída
 
     return 0;
 }
@@ -111,18 +118,14 @@ Node* newnode(int num) {
 }
 
 double tvtosec(struct timeval t) {
-    return (double) t.tv_sec + t.tv_usec / (double)1e6;
+    return (double)t.tv_sec + t.tv_usec / (double)1e6;
 }
 
-void tprint(Node* x, FILE* file) {
+void tprint(Node* x) {
     if (x != NULL) {
-        tprint(x->l, file);
-        fprintf(file, "%p [label=\"%d\"];\n", x, x->v);
-        if (x->l != NULL)
-            fprintf(file, "%p -> %p;\n", x, x->l);
-        if (x->r != NULL)
-            fprintf(file, "%p -> %p;\n", x, x->r);
-        tprint(x->r, file);
+        tprint(x->l);
+        printf("%p %d %p %p \n", x, x->v, x->l, x->r);
+        tprint(x->r);
     }
 }
 
@@ -133,11 +136,4 @@ void tremove(Node* x) {
         free(x);
     }
     return;
-}
-
-void printDotFile(Node* node, FILE* file) {
-    fprintf(file, "digraph G {\n");
-    tprint(node, file);
-    fprintf(file, "}\n");
-    printf("Arquivo DOT gerado com sucesso.\n");
 }
