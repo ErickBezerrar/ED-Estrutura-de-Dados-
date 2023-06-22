@@ -1,166 +1,157 @@
-#include <stdio.h>
+
 #include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
 
-struct arv {
-    char info;
-    struct arv *esq;
-    struct arv *dir;
-};
-typedef struct arv Arv;
+typedef struct node {
+    int v;
+    struct node *l;
+    struct node *r;
 
-int arvoreEstaVazia(Arv *a)
-{
-    return a == NULL;
-}
+}Node;
 
-int maior(int a, int b)
-{
-    return (a > b) ? a : b;
-}
+void adicionar(Node **node, int v);
+int tsearch(Node* x, int v);
+Node* newnode(int num);
+int *newv (unsigned int n);
+double tvtosec(struct timeval t);
+void tprint(Node* x);
+void tremove(Node* x);
 
-int alturaArvore(Arv *a)
-{
-    if (arvoreEstaVazia(a))
-        return 0;
-    else
-        return 1 + maior(alturaArvore(a->esq), alturaArvore(a->dir));
-}
+ 
+int main (void){
+    Node *node = NULL;
+	srand(time(NULL)); 
+	struct timeval a;
+	struct timeval b;
+	double tempo;
+    int achou;
+    int n, k, i, primeiro, aleatorio;
 
-Arv *liberaArvore(Arv *a)
-{
-    if (!arvoreEstaVazia(a)) {
-        liberaArvore(a->esq);
-        liberaArvore(a->dir);
-        free(a);
-    }
-    return NULL;
-}
 
-int buscaBinaria(Arv *a, char c)
-{
-    if (arvoreEstaVazia(a)) {
-        return 0;
-    } else {
-        if (a->info == c) {
-            return 1;
-        } else {
-            if (a->info > c) {
-                return buscaBinaria(a->esq, c);
-            } else {
-                return buscaBinaria(a->dir, c);
+    /* CONTROLA O TAMANHO */
+
+ 	for(n = 1000; n <= 10000; n += 500){
+ 		tempo = 0;
+
+        /* CALCULA A MEDIA */
+        
+ 		for(i = 0; i < 10000 ; i++){
+            
+            /* PREENCHE A ÁRVORE */
+
+            for(k = 0; k < n; k++){
+
+                aleatorio = rand() % (n+1);
+                adicionar(&node, aleatorio);
+
+                /* pegando o primeiro elemento adicionado para o melhor caso */
+
+                if(k == 0){
+                    primeiro = aleatorio;
+                }
             }
-        }
-    }
-}
 
-int pertence(Arv *a, char c)
-{
-    if (arvoreEstaVazia(a)) {
-        return 0;
-    } else {
-        if (a->info == c) {
-            return 1;
-        } else {
-            if (pertence(a->esq, c)) {
-                return 1;
-            } else {
-                return pertence(a->dir, c);
-            }
-        }
-    }
-}
+		 	gettimeofday(&b, NULL);
 
-Arv *criaArvoreVazia(void)
-{
-    return NULL;
-}
+            achou = tsearch(node, primeiro); /* melhor caso */
+            /* achou = tsearch(node, (n*2)); /* pior caso */
+            /* achou = tsearch(node, (rand() % (n+1))); /* caso  médio*/
+		 	gettimeofday(&a, NULL);
 
-Arv *criaArvore(char c, Arv *subArvEsq, Arv *subArvDir)
-{
-    Arv *a;
-    a = (Arv *)malloc(sizeof(Arv));
-    a->info = c;
-    a->esq = subArvEsq;
-    a->dir = subArvDir;
-    return a;
-}
+		 	tempo  += tvtosec(a) - tvtosec(b);
 
-void imprimirArvore(Arv *a)
-{
-    if (!arvoreEstaVazia(a)) {
-        printf("(");
-        printf("%c ", a->info);
-        imprimirArvore(a->esq);
-        imprimirArvore(a->dir);
-        printf(")");
-    }
-}
+            /* LIBERA A ARVORE */
+            
+            tremove(node);
+            node = NULL;
+	 	}
 
-int busca_arvore(char x, Arv *pt)
-{
-    if (pt == NULL) {
-        return 0;
-    } else if (x == pt->info) {
-        return 1;
-    } else if (x < pt->info) {
-        if (pt->esq == NULL) {
-            return 2;
-        } else {
-            pt = pt->esq;
-            return busca_arvore(x, pt);
-        }
-    } else {
-        if (pt->dir == NULL) {
-            return 3;
-        } else {
-            pt = pt->dir;
-            return busca_arvore(x, pt);
-        }
-    }
-}
+        /* PRINTA O RESULTADO */
 
-void insercao_Arvore(char x, Arv **pt)
-{
-    int f = busca_arvore(x, *pt);
-    if (f == 1) {
-        printf("Inserção inválida");
-    } else {
-        Arv *novo;
-        novo = criaArvore(x, criaArvoreVazia(), criaArvoreVazia());
-        novo->esq = NULL;
-        novo->dir = NULL;
-        if (f == 0) {
-            *pt = novo;
-        } else {
-            if (f == 2) {
-                (*pt)->esq = novo;
-            } else {
-                (*pt)->dir = novo;
-            }
-        }
-    }
-}
+	 	fprintf(stderr, "%d %.20lf\n", n, tempo/10000 );
+	 	printf("%d %.20lf\n", n, tempo/10000 );
 
-int main()
-{
-    char c;
-    Arv *a, *a1, *a2, *a3, *a4, *a5;
-    a1 = criaArvore('f', criaArvoreVazia(), criaArvoreVazia());
-    a2 = criaArvore('d', criaArvoreVazia(), a1);
-    a3 = criaArvore('m', criaArvoreVazia(), criaArvoreVazia());
-    a4 = criaArvore('x', criaArvoreVazia(), criaArvoreVazia());
-    a5 = criaArvore('p', a3, a4);
-    a = criaArvore('j', a2, a5);
-    imprimirArvore(a);
-    printf("\nAltura da Árvore: %d\n", alturaArvore(a));
-    printf("Digite o caractere a ser procurado: ");
-    scanf(" %c", &c);
-    if (pertence(a, c)) {
-        printf("Encontrei o caractere '%c' na árvore!\n", c);
-    } else {
-        printf("Não encontrei o caractere '%c' na árvore!\n", c);
-    }
+	}
 
-    liberaArvore(a);
     return 0;
+}
+
+
+void adicionar(Node **n, int v) {
+
+    Node *aux, *f;
+
+    if(*n == NULL){
+        (*n) = newnode(v);
+    }else{
+        aux = *n;
+        while(aux != NULL){
+            f = aux;
+            if(aux->v < v){
+                aux = aux->r;
+            }else{
+                aux = aux->l;
+            }
+        }
+
+      (f->v < v) ? (f->r = newnode(v)) : (f->l = newnode(v));
+    }
+}
+
+
+int tsearch(Node* x, int v){
+    if(x != NULL){
+        if(x->v == v){
+            return 1;
+        }else if(x->v < v){
+            return tsearch(x->r, v);
+        }else{ 
+            return tsearch(x->l,v);
+        }
+    }else{
+        return 0;
+    }
+
+}
+
+Node* newnode(int num){
+
+    Node* a = (Node*)malloc(sizeof(Node));
+    a->v = num;
+    a->l = NULL;
+    a->r = NULL;
+    return a;
+
+}
+
+
+double tvtosec(struct timeval t){
+  return (double) t.tv_sec + t.tv_usec/(double)1e6;
+
+}
+
+
+void tprint(Node* x){
+    
+    if(x != NULL){
+        tprint(x->l);
+        printf("%p %d %p %p \n", x , x->v, x->l, x->r);
+        tprint(x->r);
+    }
+
+}
+
+void tremove(Node* x){
+
+    if(x != NULL){
+        tremove(x->l);
+        tremove(x->r);
+        free(x);
+    }
+    return;
+
 }
