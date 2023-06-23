@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -7,22 +6,21 @@
 #include <unistd.h>
 
 /* estrutura */
-typedef struct tree{
+typedef struct tree {
     struct tree *p;
     struct tree *r;
     struct tree *l;
     int v;
     unsigned int h;
-}Tree;
-
+} Tree;
 
 /* assinaturas das funções */
 Tree* newnode(int num);
-void adicionar(Tree **raiz, int v, Tree* pai, Tree** RaizOriginal);
-void tprint( Tree* x);
+void adicionar(Tree** raiz, int v, Tree* pai, Tree** RaizOriginal);
+void tprint(Tree* x);
 void verifica(Tree* n, Tree** RaizOriginal);
 int mod(int i);
-unsigned int alturaArvore(Tree *a);
+unsigned int alturaArvore(Tree* a);
 unsigned int maxAlt(int no1, int no2);
 void balancear(Tree* n, Tree** RaizOriginal);
 void re(Tree* x);
@@ -31,65 +29,55 @@ int buscar(Tree* raiz, int n);
 double tvtosec(struct timeval t);
 void tremove(Tree* x);
 
-
 /* função principal */
-int main (void) {
+int main(void) {
     Tree* raiz = NULL;
     srand(time(NULL));
-	struct timeval a;
-	struct timeval b;
-	double tempo;
+    struct timeval a;
+    struct timeval b;
+    double tempo;
     int i, aleatorio, k, n, achou;
 
-    /* CONTROLA O TAMANHO */
+    FILE* output = fopen("output.txt", "w"); // Open the file for writing
 
- 	for(n = 1000; n <= 10000; n += 1000){      
-        
- 		tempo = 0;
+    /* CONTROLA O TAMANHO */
+    for (n = 1000; n <= 10000; n += 1000) {
+
+        tempo = 0;
 
         /* CALCULA A MEDIA */
- 		for(i = 0; i < 100 ; i++){
+        for (i = 0; i < 100; i++) {
 
             /* ADICIONA ELEMENTOS AO VETOR */
-            
-            for(k = 0; k < n; k++){
-                aleatorio = rand() % (n+1);
-                if(buscar(raiz, aleatorio) != 1)
+
+            for (k = 0; k < n; k++) {
+                aleatorio = rand() % (n + 1);
+                if (buscar(raiz, aleatorio) != 1)
                     adicionar(&raiz, aleatorio, NULL, &raiz);
             }
 
-		 	gettimeofday(&b, NULL);
-             
-            /* PROCURANDO NO VETOR */
-            achou = buscar(raiz, (n*2)); /* pior caso */
-            /* achou = buscar(raiz, (rand() % (n+1))); /* caso médio */
+            gettimeofday(&b, NULL);
 
-		 	gettimeofday(&a, NULL);
-		 	tempo  += tvtosec(a) - tvtosec(b);
+            /* PROCURANDO NO VETOR */
+            /* achou = buscar(raiz, (n*2)); pior caso */
+            achou = buscar(raiz, (rand() % (n + 1))); /* caso médio */
+
+            gettimeofday(&a, NULL);
+            tempo += tvtosec(a) - tvtosec(b);
 
             tremove(raiz);
             raiz = NULL;
-	 	}
-
+        }
 
         /* PRINTA O RESULTADO */
+        fprintf(output, "%d %.20lf\n", n, tempo / 100);
+        printf("%d %.20lf\n", n, tempo / 100);
+    }
 
-	 	fprintf(stderr, "%d %.20lf\n", n, tempo/100 );
-	 	printf("%d %.20lf\n", n, tempo/100 );
+    fclose(output); // Close the file
 
-     }
-
-    /* testes manuais
-
-    adicionar(&raiz, 35, NULL, &raiz);
-    adicionar(&raiz, 33, NULL, &raiz);
-    adicionar(&raiz, 37, NULL, &raiz);
-    
-    tprint(raiz);
-    
-    */
+    return 0;
 }
-
 
 void adicionar(Tree **raiz, int v, Tree* pai, Tree** raizOriginal){
 

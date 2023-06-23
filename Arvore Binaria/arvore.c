@@ -53,9 +53,9 @@ int main(void) {
             }
 
             gettimeofday(&b, NULL);
-            achou = tsearch(node, primeiro); /* melhor caso */
+            /* achou = tsearch(node, primeiro); /* melhor caso */
             /* achou = tsearch(node, (n*2)); /* pior caso */
-            /* achou = tsearch(node, (rand() % (n+1))); /* caso médio*/
+            achou = tsearch(node, (rand() % (n+1))); /* caso médio*/
             gettimeofday(&a, NULL);
 
             tempo += tvtosec(a) - tvtosec(b);
