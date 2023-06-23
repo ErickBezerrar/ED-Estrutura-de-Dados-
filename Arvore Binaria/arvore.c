@@ -28,7 +28,7 @@ int main(void) {
     int achou;
     int n, k, i, primeiro, aleatorio;
 
-    FILE *output_file = fopen("output.txt", "w"); // Abrir arquivo de saída
+    FILE *output_file = fopen("arvore_medio.txt", "w"); // Abrir arquivo de saída
 
     if (output_file == NULL) {
         fprintf(stderr, "Erro ao abrir o arquivo de saída.\n");

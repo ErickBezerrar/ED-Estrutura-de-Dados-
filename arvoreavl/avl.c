@@ -38,7 +38,7 @@ int main(void) {
     double tempo;
     int i, aleatorio, k, n, achou;
 
-    FILE* output = fopen("output.txt", "w"); // Open the file for writing
+    FILE* output = fopen("avl_medio.txt", "w"); // Open the file for writing
 
     /* CONTROLA O TAMANHO */
     for (n = 1000; n <= 10000; n += 1000) {
