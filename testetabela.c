@@ -193,7 +193,6 @@ int main(int argc, char **argv) {
 		inserirTabela(&tabela, novoBloco(rand()));
 	}
 
-
     clock_gettime(CLOCK_MONOTONIC, &b);
     achou = buscaTab(&tabela, rand());
     clock_gettime(CLOCK_MONOTONIC, &a);
@@ -224,8 +223,25 @@ int main(int argc, char **argv) {
 
     fclose(dot_file);
 
+    // Abre o arquivo de saída
+    FILE *saida_file = fopen("saida.txt", "w");
+    if (saida_file == NULL) {
+        printf("Erro ao abrir o arquivo de saída.\n");
+        return 1;
+    }
+
+    // Escreve os valores de saída no arquivo
+    for (i = 0; i < tabela.tam; i++) {
+        Bloco *bloco = tabela.lista[i];
+        while (bloco != NULL) {
+            fprintf(saida_file, "%d\n", bloco->valor);
+            bloco = bloco->proximo;
+        }
+    }
+
+    fclose(saida_file);
+
     removeTabela(&tabela);
 
     return 0;
 }
-
