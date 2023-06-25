@@ -1,229 +1,301 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <math.h>
 
-/* estruturas */
-
+// struct para caso exista colisão
 typedef struct bloco {
     int valor;
     struct bloco *proximo;
 } Bloco;
 
-/* struct que simula o vetor */
+// struct para a tabela
+typedef struct tabela {
+    int quant; // n
+    int tam; // m 
+    struct bloco **lista;
+} Tabela;
 
-typedef struct table {
-    unsigned int tam;
-    unsigned int n;
-    struct bloco **b;
-} Table;
+struct bloco* novoBloco(int valor);
+void inserirTabela(Tabela* tabela, Bloco* bloco);
+void removeTabela(Tabela* tabela);
+void removeBloco(Bloco* bloco);
+void exibeTabela(Tabela *tabela);
+void exibeLista(Bloco *valorAdic);
+int buscaTab(Tabela *tabela, int valor);
+void atualizaTab(Tabela* tabela, Bloco* bloco);
 
-/* assinaturas das funções */
-
-Bloco *novo(int);
-unsigned int hash(int a, int b);
-void tremoveTabela(Table *table);
-void tremoveBloco(Bloco *bloco);
-void update_tam(Table *table);
-void adicionar(Table *table, Bloco *bloco);
-void exibiLista(Bloco *x);
-void exibiTabela(Table *t);
-int buscar(Table *table, int valor);
-void atualizar(Table *table);
-double tvtosec(struct timeval t);
-
-/* função principal */
-int main(void) {
-    srand(time(NULL));
-    Table table;
-    int valor, i, j, y, k, achou, aleatorio;
-    struct timeval a, b;
-    double tempo;
-
-    /* alocando a memória necessária para realizar os testes */
-
-    table.b = malloc(sizeof(Bloco *) * (10000));
-    table.n = 0;
-    table.tam = 10000;
-
-    FILE *outputFile = fopen("output.txt", "w");
-    if (outputFile == NULL) {
-        printf("Erro ao abrir o arquivo de saída.\n");
-        return 1;
-    }
-
-    for (j = 1000; j <= 10000; j += 10) {
-
-        tempo = 0;
-
-        for (k = 0; k < 5000; k++) {
-
-            /* preenchendo a tabela com null */
-            for (i = 0; i < j; i++) {
-                table.b[i] = NULL;
-            }
-
-            /* adicionando elementos */
-            for (y = 0; y < j; y++) {
-                aleatorio = rand() % (j + 1);
-                adicionar(&table, novo(aleatorio));
-            }
-
-            gettimeofday(&b, NULL);
-            achou = buscar(&table, rand() % (y + 1));
-            gettimeofday(&a, NULL);
-
-            tempo += tvtosec(a) - tvtosec(b);
-            tremoveTabela(&table);
-        }
-
-        /* PRINTA O RESULTADO */
-
-        fprintf(outputFile, "%d %.20lf\n", j, tempo / 5000);
-        printf("%d %.20lf\n", j, tempo / 5000);
-
-    }
-
-    fclose(outputFile);
-    printf("Saída gravada no arquivo output.txt.\n");
-
-    return 0;
-}
-
-/* função para criar um novo bloco */
-Bloco *novo(int c) {
-    Bloco *bloco;
-    bloco = (Bloco *)malloc(sizeof(Bloco));
-    bloco->valor = c;
+// função para criar um bloco novo
+struct bloco* novoBloco(int valor) {
+    struct bloco* bloco = (struct bloco*)malloc(sizeof(struct bloco));
+    bloco->valor = valor;
     bloco->proximo = NULL;
     return bloco;
 }
 
-/* função para fazer o hash */
-unsigned int hash(int valor, int tam) {
-    return (valor % tam);
-}
+// função para adicionar na tabela
+void inserirTabela(Tabela* tabela, Bloco* bloco) {
 
-/* função para inserir elemento na tabela */
-void adicionar(Table *table, Bloco *bloco) {
-    /* verifica se é necessário atualizar o tamanho */
-    if (table->n >= table->tam) {
-        printf("\n>> Dobrando tamanho <<\n");
-        atualizar(table);
+    if(tabela->quant >= tabela->tam){
+		atualizaTab(tabela, bloco);
+	}
+
+    else {
+    // verificando a posição onde será inserido 
+        int posicao = bloco->valor % tabela->tam;
+
+        if(tabela->lista[posicao] == NULL){
+            tabela->lista[posicao] = bloco;
+
+        }
+        
+        else{
+            bloco->proximo = tabela->lista[posicao];
+            tabela->lista[posicao] = bloco;
+        }
+
+        tabela->quant++;
     }
 
-    /* verificando a posição onde será inserido */
-    unsigned int posicao = hash(bloco->valor, table->tam);
-
-    if (table->b[posicao] == NULL) {
-        table->b[posicao] = bloco;
-    } else {
-        bloco->proximo = table->b[posicao];
-        table->b[posicao] = bloco;
-    }
-    table->n++;
+    // printf("%d %d", tabela->quant, tabela->tam);
+    // getchar();
 }
 
-/* funções para liberação */
-void tremoveTabela(Table *table) {
+// funções para liberar espaço
+void removeTabela(Tabela* tabela) {
+	int i;
+	for(i = 0; i< tabela->tam; i++){
+		removeBloco(tabela->lista[i]);
+		tabela->lista[i] = NULL;
+	}
+	tabela->quant = 0;
+	
+}
+
+
+void removeBloco(Bloco* bloco) {
+	Bloco *aux;
+
+	while (bloco != NULL){
+		aux = bloco->proximo;
+		free(bloco);
+		bloco = aux;
+	}	
+
+}
+
+// funções para mostrar a tabela
+void exibeTabela(Tabela *tabela) {
     int i;
-    for (i = 0; i < table->tam; i++) {
-        tremoveBloco(table->b[i]);
-        table->b[i] = NULL;
-    }
-    table->n = 0;
-}
 
-void tremoveBloco(Bloco *bloco) {
-    Bloco *auxiliar;
-    while (bloco != NULL) {
-        auxiliar = bloco->proximo;
-        free(bloco);
-        bloco = auxiliar;
-    }
-}
-
-/* funções para printar arvore */
-void exibiTabela(Table *t) {
-    int i;
-    for (i = 0; i < t->tam; i++) {
-        printf("Chave tabela: %d", i);
+    for (i = 0; i < tabela->tam; i++){
+        printf("Chave: %d", i);
         printf(" --> ");
-        exibiLista(t->b[i]);
+        exibeLista(tabela->lista[i]);
         printf("\n");
     }
 }
 
-void exibiLista(Bloco *x) {
-    while (x != NULL) {
-        printf("%d", x->valor);
+void exibeLista(Bloco *valorAdic) {
+    while (valorAdic != NULL){
+        printf("%d", valorAdic->valor);
         printf(" ");
-        x = x->proximo;
+        valorAdic = valorAdic->proximo;
     }
 }
 
-/* função para buscar na árvore */
-int buscar(Table *table, int valor) {
+// função para a busca
+int buscaTab(Tabela *tabela, int valor) {
     int posicao;
-    Bloco *bloco;
-    posicao = hash(valor, table->tam);
-    for (bloco = table->b[posicao]; bloco != NULL; bloco = bloco->proximo) {
-        if (bloco->valor == valor) {
+    Bloco *list;
+    posicao = valor % tabela->tam;
+
+    for (list = tabela->lista[posicao]; list != NULL; list = list->proximo){    	
+        if(list->valor == valor){
             return 1;
         }
     }
     return 0;
 }
 
-/* função para fazer update no tamanho da tabela */
-void atualizar(Table *table) {
-    int i, tam = table->tam;
+// função para atualizar
+void atualizaTab(Tabela* tabela, Bloco* bloco) {
+	int i;
+    int tam = tabela->tam;
 
-    /* criando uma tabela estática auxiliar com o dobro do tamanho */
-    Table new;
-    new.tam = (tam * 2);
-    new.b = malloc(sizeof(Bloco *) * new.tam);
+	// criando uma tabela estática auxiliar com o dobro do tamanho 
+	Tabela new;
+	new.tam = (tam * 2);
+	new.lista = malloc(sizeof(Bloco *) * new.tam);
+    new.quant = 1;
 
-    /* preenche os valores da tabela auxiliar como NULL */
-    for (i = 0; i < new.tam; i++) {
-        new.b[i] = NULL;
+	// prenche os valores da tabela auxiliar como NULL 
+	for (i = 0; i < new.tam; i++){
+        new.lista[i] = NULL;
     }
 
-    /* insere os elementos na nova tabela */
-    for (i = 0; i < tam; i++) {
-        Bloco *vOrg;
-        vOrg = table->b[i];
-        while (vOrg != NULL) {
-            /* calcula a posição que o valor será inserido */
-            unsigned int posicao = hash(vOrg->valor, new.tam);
+    int posicao = bloco->valor % new.tam;
 
-            /* cria um novo elemento do tipo bloco passando o valor da table original */
-            Bloco *b = novo(vOrg->valor);
+    new.lista[posicao] = bloco;
 
-            /* insere o novo elemento na nova table na posição */
-            if (new.b[posicao] == NULL) {
-                new.b[posicao] = b;
-            } else {
-                b->proximo = new.b[posicao];
-                new.b[posicao] = b;
-            }
-            vOrg = vOrg->proximo;
-            new.n++;
+    // insere os elementos na nova tabela 
+	for (i = 0; i < tam; i++){
+    	Bloco *adicNewTab;
+	    adicNewTab = tabela->lista[i];
+	    while (adicNewTab != NULL){
+
+	        int posicao = adicNewTab->valor % tabela->tam;
+
+	        Bloco *tab = novoBloco(adicNewTab->valor);
+
+	        if(new.lista[posicao] == NULL){
+		        new.lista[posicao] = tab;
+	        }
+
+            else{
+				tab->proximo = new.lista[posicao];
+				new.lista[posicao] = tab;
+		    }
+
+			adicNewTab = adicNewTab->proximo;
+			new.quant++;
+	    }
+    }
+
+    // remove as posições de memória usadas pela original 
+    removeTabela(tabela);
+
+    *tabela = new;
+    tabela->lista = new.lista;
+    tabela->tam = new.tam;
+	tabela->quant = new.quant;
+}
+
+void dotHash(FILE *file, Tabela *tabela) {
+    fprintf(file, "  main_table [shape=record, label=\"");
+
+    for (int i = 0; i < tabela->tam; i++) {
+        if (i > 0) {
+            fprintf(file, "|");
+        }
+
+        if (tabela->lista[i] == NULL) {
+            fprintf(file, "<slot%d> NULL", i);
+        } else {
+            fprintf(file, "<slot%d> %p", i, (void *)tabela->lista[i]);
         }
     }
 
-    /* remove as posições de memória usadas pela table original */
-    tremoveTabela(table);
+    fprintf(file, "\"];\n");
 
-    /* atribui valores do new na tabela original */
-    table->b = new.b;
-    table->tam = new.tam;
-    table->n = new.n;
+    for (int i = 0; i < tabela->tam; i++) {
+        Bloco *bloco = tabela->lista[i];
+
+        if (bloco != NULL) {
+            fprintf(file, "  \"%p\" [shape=record, label=\"{%d|%p}\"];\n", (void *)bloco, bloco->valor, (void *)bloco->proximo);
+            fprintf(file, "  main_table:slot%d -> \"%p\";\n", i, (void *)bloco);
+
+            while (bloco->proximo != NULL) {
+                fprintf(file, "  \"%p\" -> \"%p\" [style=dotted];\n", (void *)bloco, (void *)bloco->proximo);
+                bloco = bloco->proximo;
+                fprintf(file, "  \"%p\" [shape=record, label=\"{%d|%p}\"];\n", (void *)bloco, bloco->valor, (void *)bloco->proximo);
+            }
+        }
+    }
 }
 
-/* função para converter o tempo */
-double tvtosec(struct timeval t) {
-    return (double)t.tv_sec + t.tv_usec / (double)1e6;
+
+int main(int argc, char **argv) {
+    struct timespec a, b;
+    int t, n, i, achou;
+    Tabela tabela;
+
+	tabela.lista = malloc(sizeof(Bloco*)*(4));
+	tabela.quant = 0;
+	tabela.tam = 4;
+    
+    n = atoi(argv[1]);
+    srand(time(NULL));
+
+    for (i = 0; i < 4; i++) {
+        tabela.lista[i] = NULL;
+    }
+
+	for (i = 0; i < n; i++) {
+		inserirTabela(&tabela, novoBloco(rand() % 10000));
+	}
+
+
+    clock_gettime(CLOCK_MONOTONIC, &b);
+    achou = buscaTab(&tabela, n);
+    clock_gettime(CLOCK_MONOTONIC, &a);
+
+    // if (achou == 1) {
+    //     printf("Achou.\n");
+    // }
+
+    // else {
+    //     printf("Não achou.\n");
+    // }
+
+    exibeTabela(&tabela);
+
+    t = (a.tv_sec * 1e9 + a.tv_nsec) - (b.tv_sec * 1e9 + b.tv_nsec);
+
+    printf("%u\n", t);
+
+    FILE *dot_file = fopen("hash.dot", "w");
+    if (dot_file == NULL) {
+        printf("Erro ao abrir o arquivo para escrita.\n");
+        return 1;
+    }
+
+    fprintf(dot_file, "digraph G {\n node [shape=record, height=0.6, width=1.5];\n edge [arrowhead=vee, arrowsize=0.8];\n");
+    dotHash(dot_file, &tabela);
+    fprintf(dot_file, "}\n");
+
+    fclose(dot_file);
+
+    removeTabela(&tabela);
+
+    return 0;
 }
+
+// int main(void) { 
+// 	srand(time(NULL));
+// 	Tabela tabela;
+//     int valor,i,j,y,k, achou, aleatorio;
+//     struct timeval a, b;
+// 	double tempo;
+
+//     tabela.lista = malloc(sizeof(Bloco*)*(4));
+// 	tabela.quant = 0;
+// 	tabela.tam = 4;
+
+// 	for(j = 100; j <= 900; j+= 100){
+
+// 		tempo = 0;
+
+// 		for(k = 0; k < 5000; k++){
+// 			for(i = 0; i < j; i++){
+// 				tabela.lista[i] = NULL;
+// 			}
+
+// 			for(y =0; y < j; y++){
+// 				aleatorio = rand() % (j+1);
+// 				inserirTabela(&tabela, novoBloco(aleatorio));
+// 			}
+
+// 			gettimeofday(&b, NULL);
+//             achou = buscaTab(&tabela, rand() % (y+1));
+// 		 	gettimeofday(&a, NULL);
+
+// 		 	tempo  += tvtosec(a) - tvtosec(b);
+// 			removeTabela(&tabela);
+// 		}
+
+// 		fprintf(stderr, "%d %.20lf\n", j, tempo/5000 );
+// 		printf("%d %.20lf\n", j, tempo/5000 );
+
+// 	}
+
+// }
