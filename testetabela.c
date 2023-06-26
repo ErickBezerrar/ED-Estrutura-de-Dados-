@@ -197,15 +197,6 @@ int main(int argc, char **argv) {
     achou = buscaTab(&tabela, rand());
     clock_gettime(CLOCK_MONOTONIC, &a);
 
-    // if (achou == 1) {
-    //     printf("Achou.\n");
-    // }
-
-    // else {
-    //     printf("Não achou.\n");
-    // }
-
-    //exibeTabela(&tabela);
 
     t = (a.tv_sec * 1e9 + a.tv_nsec) - (b.tv_sec * 1e9 + b.tv_nsec);
 
